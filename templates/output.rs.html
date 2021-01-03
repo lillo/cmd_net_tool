@@ -1,0 +1,15 @@
+@use crate::transaction::TransactionDependency; @(list:&[TransactionDependency])
+<html>
+
+<head>
+    <title>Dependency Net</title>
+</head>
+<div class="mermaid">
+    graph TD 
+    @for dep in list { 
+    #@dep.0 --> #@dep.1
+    }
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
+</html>
