@@ -68,7 +68,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 name = "cldb"
 version = "0.1.0"
 dependencies = [
- "contract-analysis",
+ "ethca",
  "ethereum-types",
  "json",
  "ructe",
@@ -81,17 +81,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eb6210b637171dfba4cda12e579ac6dc73f5165ad56133e5d72ef3131f320855"
 dependencies = [
  "cc",
-]
-
-[[package]]
-name = "contract-analysis"
-version = "0.1.0"
-dependencies = [
- "ethereum-types",
- "scoped_threadpool",
- "threadpool",
- "z3",
- "z3-sys",
 ]
 
 [[package]]
@@ -117,6 +106,18 @@ dependencies = [
  "impl-rlp",
  "impl-serde",
  "tiny-keccak",
+]
+
+[[package]]
+name = "ethca"
+version = "0.1.0"
+source = "git+https://github.com/Samuele0/contract_analyzer#a5fc441e4e3996a99c58d6f8358a059d762a28bd"
+dependencies = [
+ "ethereum-types",
+ "scoped_threadpool",
+ "threadpool",
+ "z3",
+ "z3-sys",
 ]
 
 [[package]]
