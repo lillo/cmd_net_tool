@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["Samuele0 <samuele0@tutanota.com>"]
 edition = "2018"
 build = "./src/build.rs"
+license = "MIT"
+license-file ="LICENSE"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 ethca = { git = "https://github.com/Samuele0/contract_analyzer" }
