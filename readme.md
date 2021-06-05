@@ -9,6 +9,9 @@ The transaction list is specified in the JSON format (see `block.json` for an ex
 
 The ouput is written to a file named “output.html”.
 
+The details of the design and the implementation of the library are described in 
+> Tosi Samuele. [A Library for the concurrent execution of Ethereum blocks](https://sol.unifi.it/tesi/consultazione). Master's Thesis. University of Florence, 2021.
+
 ## Usage
 
 ~~~sh
