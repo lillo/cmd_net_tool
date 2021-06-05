@@ -1,11 +1,11 @@
-extern crate contract_analysis;
+extern crate ethca;
 extern crate ethereum_types;
 extern crate json;
 extern crate ructe;
 
 mod transaction;
 
-use contract_analysis::*;
+use ethca::*;
 use ethereum_types::U256;
 use json::JsonValue;
 use std::env::args;
@@ -14,6 +14,9 @@ use std::sync::{Arc, Mutex};
 use transaction::{Transaction, TransactionDependency};
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 use crate::templates::*;
+use std::io::Write;
+use std::time::*;
+
 fn main() -> std::io::Result<()> {
     //args().next();
     let file = args().skip(1).next();
@@ -84,6 +87,7 @@ fn parse_transaction(o: json::object::Object) -> Transaction {
 
 fn create_net(transactions: &[Transaction]) {
     let mut netbuilder = NetBuilder::new();
+    let start_time = Instant::now();
 
     for transaction in transactions {
         if let Transaction::NewContract {
@@ -96,6 +100,8 @@ fn create_net(transactions: &[Transaction]) {
         }
         netbuilder.new_transaction(transaction, Box::from(|| {}));
     }
+
+    println!("Analysis of the bytecode completed in {:?}", start_time.elapsed());
     create_graphical_net(netbuilder)
 }
 
@@ -114,25 +120,44 @@ fn parse_bytecode(bc: &String) -> Vec<u8> {
 }
 
 fn create_graphical_net(nb: NetBuilder) {
+    let start_time = Instant::now();
     let start_trans = nb.finalize();
-    let buffer = String::new();
+    println!("Net built in {:?}", start_time.elapsed());
+    
     let mut dep_list = vec![];
-    print_trans(&start_trans, &mut dep_list);
+    let mut graph_file = std::fs::File::create("./graph.txt").unwrap();
+    print_trans(&start_trans, &mut dep_list, &mut graph_file);
+    dep_list.sort();
+    dep_list.dedup();
     let mut out_file = std::fs::File::create("./output.html").unwrap();
     output_html(&mut out_file, &dep_list).unwrap();
 }
+
+
 fn print_trans(
-    trans: &Vec<Arc<Mutex<contract_analysis::net::transaction::Transaction>>>,
-    dep_list: &mut Vec<TransactionDependency>,
-) {
+    trans: &Vec<Arc<Mutex<ethca::net::transaction::Transaction>>>,
+    dep_list: &mut Vec<TransactionDependency>, 
+    graph_file : &mut std::fs::File) {
+    let mut tt = vec![];
+
+    for r in trans {
+        tt.push(r.lock().unwrap().id)
+    }
+
     for t in trans {
-        println!("Transaction #{}", t.lock().unwrap().id);
+        //println!("Transaction #{}", t.lock().unwrap().id);
         let lock = t.lock().unwrap();
         let deps = &lock.dependencies;
+        let mut tovisit = vec![];
         for d in deps {
-            println!("{} => {}", lock.id, d.lock().unwrap().id);
+            // println!("{} => {}", lock.id, d.lock().unwrap().id);
+            writeln!(graph_file, "{} => {}", lock.id, d.lock().unwrap().id);
             dep_list.push(TransactionDependency(lock.id, d.lock().unwrap().id));
+            if !tt.contains(&d.lock().unwrap().id) {
+                tovisit.push(d.clone());
+            }
         }
-        print_trans(deps, dep_list);
+        print_trans(&tovisit, dep_list, graph_file);
+    
     }
 }
