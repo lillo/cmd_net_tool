@@ -1,4 +1,4 @@
-use contract_analysis::*;
+use ethca::*;
 use ethereum_types::U256;
 pub enum Transaction {
     NewContract {
@@ -33,4 +33,5 @@ impl TransactionDataProvider for Transaction {
     }
 }
 
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
 pub struct TransactionDependency(pub usize, pub usize);
