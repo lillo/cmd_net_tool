@@ -10,8 +10,8 @@ license-file ="LICENSE"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 ethca = { git = "https://github.com/Samuele0/contract_analyzer" }
-json = ""
-ructe = ""
-ethereum-types = ""
+json = "*"
+ructe = "*"
+ethereum-types = "*"
 [build-dependencies]
-ructe = ""
+ructe = "*"
